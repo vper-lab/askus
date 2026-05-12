@@ -3,8 +3,6 @@ import dotenv from "dotenv"
 import fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
-import { initializeApp } from "firebase/app"
-import { getDatabase, ref, get, set, remove } from "firebase/database"
 
 dotenv.config()
 
@@ -12,38 +10,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const port = process.env.PORT || 4174
 const apiKey = process.env.ANTHROPIC_API_KEY
-const fKey = (k = "") => k.replace(/[.#$[\]]/g, "-")
+const firebaseDatabaseUrl = process.env.FIREBASE_DATABASE_URL || process.env.VITE_FIREBASE_DATABASE_URL || ""
 
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY || "",
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN || process.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-  projectId: process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID || "",
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: process.env.FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID || "",
-  databaseURL: process.env.FIREBASE_DATABASE_URL || process.env.VITE_FIREBASE_DATABASE_URL || "",
+const hasFirebaseConfig = Boolean(firebaseDatabaseUrl)
+if (!hasFirebaseConfig) {
+  console.warn("Firebase backend no configurado. Define FIREBASE_DATABASE_URL en entorno servidor.")
 }
 
-const hasFirebaseConfig = [
-  firebaseConfig.apiKey,
-  firebaseConfig.authDomain,
-  firebaseConfig.projectId,
-  firebaseConfig.storageBucket,
-  firebaseConfig.messagingSenderId,
-  firebaseConfig.appId,
-  firebaseConfig.databaseURL,
-].every(Boolean)
-
-let db = null
-if (hasFirebaseConfig) {
-  try {
-    const firebaseApp = initializeApp(firebaseConfig)
-    db = getDatabase(firebaseApp)
-  } catch (error) {
-    console.warn("Firebase backend no se pudo inicializar:", error.message)
-  }
-} else {
-  console.warn("Firebase backend no configurado. Define FIREBASE_* o VITE_FIREBASE_* en entorno servidor.")
+const toDbPath = (key = "") => key.replace(/[.#$[\]]/g, "-")
+const buildDbUrl = (key) => {
+  const base = firebaseDatabaseUrl.replace(/\/+$/, "")
+  return `${base}/${toDbPath(key)}.json`
 }
 
 // Cargar preguntas desde JSON
@@ -64,25 +41,32 @@ if (!apiKey) {
 app.use(express.json())
 
 app.post("/api/storage/get", async (req, res) => {
-  if (!db) return res.status(500).json({ error: "Firebase backend no configurado." })
+  if (!hasFirebaseConfig) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   if (!key || typeof key !== "string") return res.status(400).json({ error: "key invalida." })
   try {
-    const snap = await get(ref(db, fKey(key)))
-    if (!snap.exists()) return res.json({ found: false })
-    return res.json({ found: true, value: snap.val() })
+    const response = await fetch(buildDbUrl(key))
+    if (!response.ok) throw new Error(`Firebase GET ${response.status}`)
+    const value = await response.json()
+    if (value == null) return res.json({ found: false })
+    return res.json({ found: true, value })
   } catch (error) {
     return res.status(500).json({ error: `storage/get error: ${error.message}` })
   }
 })
 
 app.post("/api/storage/set", async (req, res) => {
-  if (!db) return res.status(500).json({ error: "Firebase backend no configurado." })
+  if (!hasFirebaseConfig) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   const value = req.body?.value
   if (!key || typeof key !== "string") return res.status(400).json({ error: "key invalida." })
   try {
-    await set(ref(db, fKey(key)), value)
+    const response = await fetch(buildDbUrl(key), {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(value),
+    })
+    if (!response.ok) throw new Error(`Firebase PUT ${response.status}`)
     return res.json({ ok: true })
   } catch (error) {
     return res.status(500).json({ error: `storage/set error: ${error.message}` })
@@ -90,11 +74,12 @@ app.post("/api/storage/set", async (req, res) => {
 })
 
 app.post("/api/storage/delete", async (req, res) => {
-  if (!db) return res.status(500).json({ error: "Firebase backend no configurado." })
+  if (!hasFirebaseConfig) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   if (!key || typeof key !== "string") return res.status(400).json({ error: "key invalida." })
   try {
-    await remove(ref(db, fKey(key)))
+    const response = await fetch(buildDbUrl(key), { method: "DELETE" })
+    if (!response.ok) throw new Error(`Firebase DELETE ${response.status}`)
     return res.json({ ok: true })
   } catch (error) {
     return res.status(500).json({ error: `storage/delete error: ${error.message}` })
