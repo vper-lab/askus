@@ -192,7 +192,12 @@ export default function AskUs() {
       const me = { id: playerId, name: name.trim(), roomId: rId };
       localSet('askus:me', JSON.stringify(me));
       setIdentity(me); setRoomId(rId); setScreen('room');
-    } catch (e) { setErr('Error al crear. Revisa backend/Firebase en servidor.'); setBackendError('Backend/Firebase no disponible.'); console.error(e); }
+    } catch (e) {
+      const msg = e?.message || 'Error desconocido';
+      setErr(`Error al crear: ${msg}`);
+      setBackendError(msg);
+      console.error(e);
+    }
     finally { setBusy(false); }
   }
 
@@ -213,7 +218,12 @@ export default function AskUs() {
       const me = { id: playerId, name: name.trim(), roomId: rId };
       localSet('askus:me', JSON.stringify(me));
       setIdentity(me); setRoomId(rId); setScreen('room');
-    } catch (e) { setErr('Error al unirse. Revisa backend/Firebase en servidor.'); setBackendError('Backend/Firebase no disponible.'); console.error(e); }
+    } catch (e) {
+      const msg = e?.message || 'Error desconocido';
+      setErr(`Error al unirse: ${msg}`);
+      setBackendError(msg);
+      console.error(e);
+    }
     finally { setBusy(false); }
   }
 
