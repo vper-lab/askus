@@ -40,7 +40,7 @@ if (!apiKey) {
 
 app.use(express.json())
 
-app.post("/api/storage/get", async (req, res) => {
+app.post(["/api/storage/get", "/storage/get"], async (req, res) => {
   if (!hasFirebaseConfig) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   if (!key || typeof key !== "string") return res.status(400).json({ error: "key invalida." })
@@ -55,7 +55,7 @@ app.post("/api/storage/get", async (req, res) => {
   }
 })
 
-app.post("/api/storage/set", async (req, res) => {
+app.post(["/api/storage/set", "/storage/set"], async (req, res) => {
   if (!hasFirebaseConfig) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   const value = req.body?.value
@@ -73,7 +73,7 @@ app.post("/api/storage/set", async (req, res) => {
   }
 })
 
-app.post("/api/storage/delete", async (req, res) => {
+app.post(["/api/storage/delete", "/storage/delete"], async (req, res) => {
   if (!hasFirebaseConfig) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   if (!key || typeof key !== "string") return res.status(400).json({ error: "key invalida." })
@@ -86,7 +86,7 @@ app.post("/api/storage/delete", async (req, res) => {
   }
 })
 
-app.post("/api/generate", async (req, res) => {
+app.post(["/api/generate", "/generate"], async (req, res) => {
   const { players, meta } = req.body || {}
   if (!Array.isArray(players) || players.length < 2) {
     return res.status(400).json({ error: "Se requieren al menos 2 jugadores." })
