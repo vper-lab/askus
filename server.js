@@ -3,7 +3,8 @@ import dotenv from "dotenv"
 import fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
-import { Redis } from "@upstash/redis"
+import { initializeApp } from "firebase/app"
+import { getDatabase, ref, get, set, remove } from "firebase/database"
 
 dotenv.config()
 
@@ -11,13 +12,41 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const port = process.env.PORT || 4174
 const apiKey = process.env.ANTHROPIC_API_KEY
+const fKey = (k = "") => k.replace(/[.#$[\]]/g, "-")
 
-const hasKvConfig = Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN)
-const redis = hasKvConfig ? Redis.fromEnv() : null
-if (!hasKvConfig) {
-  console.warn("KV no configurado. Define KV_REST_API_URL y KV_REST_API_TOKEN en el entorno.")
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY || "",
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN || process.env.VITE_FIREBASE_AUTH_DOMAIN || "",
+  projectId: process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID || "",
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.VITE_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: process.env.FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID || "",
+  databaseURL: process.env.FIREBASE_DATABASE_URL || process.env.VITE_FIREBASE_DATABASE_URL || "",
 }
 
+const hasFirebaseConfig = [
+  firebaseConfig.apiKey,
+  firebaseConfig.authDomain,
+  firebaseConfig.projectId,
+  firebaseConfig.storageBucket,
+  firebaseConfig.messagingSenderId,
+  firebaseConfig.appId,
+  firebaseConfig.databaseURL,
+].every(Boolean)
+
+let db = null
+if (hasFirebaseConfig) {
+  try {
+    const firebaseApp = initializeApp(firebaseConfig)
+    db = getDatabase(firebaseApp)
+  } catch (error) {
+    console.warn("Firebase backend no se pudo inicializar:", error.message)
+  }
+} else {
+  console.warn("Firebase backend no configurado. Define FIREBASE_* o VITE_FIREBASE_* en entorno servidor.")
+}
+
+// Cargar preguntas desde JSON
 const questionsFile = path.join(__dirname, "questions.json")
 let allQuestions = []
 try {
@@ -35,25 +64,25 @@ if (!apiKey) {
 app.use(express.json())
 
 app.post("/api/storage/get", async (req, res) => {
-  if (!redis) return res.status(500).json({ error: "KV backend no configurado." })
+  if (!db) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   if (!key || typeof key !== "string") return res.status(400).json({ error: "key invalida." })
   try {
-    const value = await redis.get(key)
-    if (value == null) return res.json({ found: false })
-    return res.json({ found: true, value })
+    const snap = await get(ref(db, fKey(key)))
+    if (!snap.exists()) return res.json({ found: false })
+    return res.json({ found: true, value: snap.val() })
   } catch (error) {
     return res.status(500).json({ error: `storage/get error: ${error.message}` })
   }
 })
 
 app.post("/api/storage/set", async (req, res) => {
-  if (!redis) return res.status(500).json({ error: "KV backend no configurado." })
+  if (!db) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   const value = req.body?.value
   if (!key || typeof key !== "string") return res.status(400).json({ error: "key invalida." })
   try {
-    await redis.set(key, value)
+    await set(ref(db, fKey(key)), value)
     return res.json({ ok: true })
   } catch (error) {
     return res.status(500).json({ error: `storage/set error: ${error.message}` })
@@ -61,11 +90,11 @@ app.post("/api/storage/set", async (req, res) => {
 })
 
 app.post("/api/storage/delete", async (req, res) => {
-  if (!redis) return res.status(500).json({ error: "KV backend no configurado." })
+  if (!db) return res.status(500).json({ error: "Firebase backend no configurado." })
   const key = req.body?.key
   if (!key || typeof key !== "string") return res.status(400).json({ error: "key invalida." })
   try {
-    await redis.del(key)
+    await remove(ref(db, fKey(key)))
     return res.json({ ok: true })
   } catch (error) {
     return res.status(500).json({ error: `storage/delete error: ${error.message}` })

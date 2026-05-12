@@ -13,7 +13,7 @@ Una app web para jugar "Â¿QuiÃ©n es mÃ¡s probable que...?" con amigos. Cre
 - ðŸ—³ï¸ **Votaciones en tiempo real**: Vota quiÃ©n es mÃ¡s probable que...
 - ðŸ’¬ **Chat integrado**: Chatea mientras juegas
 - ðŸ“± **Responsive**: Funciona en mÃ³vil y desktop
-- ðŸ”¥ **Vercel KV (Redis)**: Persistencia en tiempo real (KV Redis)
+- ðŸ”¥ **Firebase**: Persistencia en tiempo real (Realtime Database)
 - âš¡ **RÃ¡pido**: Vite + React para desarrollo moderno
 
 ---
@@ -21,7 +21,7 @@ Una app web para jugar "Â¿QuiÃ©n es mÃ¡s probable que...?" con amigos. Cre
 ## ðŸ“‹ Requisitos
 
 - Node.js 18+
-- Cuenta de Google (para Vercel KV (Redis))
+- Cuenta de Google (para Firebase)
 
 ---
 
@@ -40,12 +40,12 @@ cd askus
 npm install
 ```
 
-### 3. Configura Vercel KV (Redis) (gratis)
+### 3. Configura Firebase (gratis)
 
-1. Ve a [vercel.com/marketplace](https://vercel.com/marketplace)
+1. Ve a [console.firebase.google.com](https://console.firebase.google.com)
 2. Crea un nuevo proyecto (ej: `askus-grupo`)
-3. Habilita **KV Redis**:
-   - Ve a **Build â†’ KV Redis**
+3. Habilita **Realtime Database**:
+   - Ve a **Build â†’ Realtime Database**
    - Haz clic en **"Crear base de datos"**
    - Elige **"Comenzar en modo de prueba"**
    - Selecciona regiÃ³n (ej: `europe-west1`)
@@ -64,25 +64,25 @@ Copia `.env.example` a `.env`:
 cp .env.example .env
 ```
 
-Edita `.env` con tus valores de Vercel KV (Redis):
+Edita `.env` con tus valores de Firebase:
 
 ```env
-# Vercel KV (Redis) configuration
-KV_API_KEY=tu_apiKey
-KV_AUTH_DOMAIN=tu_authDomain
-KV_DATABASE_URL=https://tu-proyecto-default-rtdb.region.firebasedatabase.app
-KV_PROJECT_ID=tu_projectId
-KV_STORAGE_BUCKET=tu_storageBucket
-KV_MESSAGING_SENDER_ID=tu_messagingSenderId
-KV_APP_ID=tu_appId
-KV_MEASUREMENT_ID=tu_measurementId
+# Firebase configuration
+FIREBASE_API_KEY=tu_apiKey
+FIREBASE_AUTH_DOMAIN=tu_authDomain
+FIREBASE_DATABASE_URL=https://tu-proyecto-default-rtdb.region.firebasedatabase.app
+FIREBASE_PROJECT_ID=tu_projectId
+FIREBASE_STORAGE_BUCKET=tu_storageBucket
+FIREBASE_MESSAGING_SENDER_ID=tu_messagingSenderId
+FIREBASE_APP_ID=tu_appId
+FIREBASE_MEASUREMENT_ID=tu_measurementId
 ```
 
-> **Nota**: El `KV_DATABASE_URL` es el mÃ¡s importante. Lo encuentras en Vercel KV (Redis) Console â†’ KV Redis â†’ URL en la parte superior.
+> **Nota**: El `FIREBASE_DATABASE_URL` es el mÃ¡s importante. Lo encuentras en Firebase Console â†’ Realtime Database â†’ URL en la parte superior.
 
 ### 5. Configura reglas de seguridad (desarrollo)
 
-Para desarrollo, pon reglas pÃºblicas en Vercel KV (Redis) Console â†’ KV Redis â†’ Rules:
+Para desarrollo, pon reglas pÃºblicas en Firebase Console â†’ Realtime Database â†’ Rules:
 
 ```json
 {
@@ -128,7 +128,7 @@ askus/
 â””â”€â”€ src/
     â”œâ”€â”€ main.jsx            # Punto de entrada React
     â”œâ”€â”€ App.jsx             # Componente principal
-    â”œâ”€â”€ firebase.js         # ConfiguraciÃ³n Vercel KV (Redis)
+    â”œâ”€â”€ firebase.js         # ConfiguraciÃ³n Firebase
     â””â”€â”€ index.css           # Estilos globales
 ```
 
@@ -171,13 +171,13 @@ npm run build
 
 ## ðŸ› SoluciÃ³n de problemas
 
-### "Vercel KV (Redis) no estÃ¡ configurado"
+### "Firebase no estÃ¡ configurado"
 - Verifica que `.env` tenga todos los valores correctos
 - Reinicia `npm run dev`
-- Comprueba que `KV_DATABASE_URL` sea vÃ¡lido
+- Comprueba que `FIREBASE_DATABASE_URL` sea vÃ¡lido
 
 ### "Error al crear sala"
-- Verifica reglas de Vercel KV (Redis) (deben permitir escritura)
+- Verifica reglas de Firebase (deben permitir escritura)
 - Comprueba conexiÃ³n a internet
 
 ### Preguntas no se generan
@@ -203,5 +203,4 @@ Este proyecto es de cÃ³digo abierto. Ãšsalo como quieras.
 ---
 
 Â¡DiviÃ©rtete jugando con tus amigos! ðŸŽ‰
-
 
