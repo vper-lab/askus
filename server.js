@@ -169,6 +169,10 @@ app.post("/api/generate", async (req, res) => {
   }
 })
 
-app.listen(port, () => {
-  console.log(`Backend seguro en http://127.0.0.1:${port}`)
-})
+if (process.env.VERCEL !== "1") {
+  app.listen(port, () => {
+    console.log(`Backend seguro en http://127.0.0.1:${port}`)
+  })
+}
+
+export default app
