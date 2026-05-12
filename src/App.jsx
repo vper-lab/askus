@@ -384,7 +384,7 @@ export default function AskUs() {
           {err && <p style={{ color: '#f87171', fontSize: 13, marginBottom: 10 }}>{err}</p>}
           <button style={{ ...S.primaryBtn, opacity: busy ? 0.6 : 1 }} disabled={busy}
             onClick={mode === 'create' ? createRoom : joinRoom}>
-            {busy ? '...' : mode === 'create' ? '?? Crear sala' : '?? Unirme'}
+            {busy ? '...' : mode === 'create' ? '🚀 Crear sala' : '🎉 Unirme'}
           </button>
         </div>
       </div>
