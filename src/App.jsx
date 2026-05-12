@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { db } from "./firebase.js";
-import { ref, get, set, remove } from "firebase/database";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 const PALETTE = [
@@ -76,7 +74,7 @@ export default function AskUs() {
   const [generating, setGenerating] = useState(false);
   const [genError,   setGenError]   = useState(false);
   const [copied,     setCopied]     = useState(false);
-  const [firebaseError] = useState(db ? '' : 'Firebase no está configurado. Revisa src/firebase.js o las variables VITE_FIREBASE_...');
+  const [backendError, setBackendError] = useState('');
   const chatEndRef = useRef(null);
   const pollRef    = useRef(null);
   const genGuard   = useRef(false);
@@ -124,7 +122,6 @@ export default function AskUs() {
 
   // Start polling when entering room
   useEffect(() => {
-    if (!db) return;
     if (screen === 'room' && roomId) {
       genGuard.current = false;
       genDone.current  = false;
@@ -183,7 +180,6 @@ export default function AskUs() {
   }
 
   async function createRoom() {
-    if (!db) { setErr('Firebase no está configurado. Revisa src/firebase.js.'); return; }
     if (!name.trim()) { setErr('Escribe tu nombre'); return; }
     setBusy(true); setErr('');
     try {
@@ -196,12 +192,11 @@ export default function AskUs() {
       const me = { id: playerId, name: name.trim(), roomId: rId };
       localSet('askus:me', JSON.stringify(me));
       setIdentity(me); setRoomId(rId); setScreen('room');
-    } catch (e) { setErr('Error al crear. Intenta de nuevo.'); console.error(e); }
+    } catch (e) { setErr('Error al crear. Revisa backend/Firebase en servidor.'); setBackendError('Backend/Firebase no disponible.'); console.error(e); }
     finally { setBusy(false); }
   }
 
   async function joinRoom() {
-    if (!db) { setErr('Firebase no está configurado. Revisa src/firebase.js.'); return; }
     if (!name.trim()) { setErr('Escribe tu nombre'); return; }
     if (!code.trim()) { setErr('Escribe el código de sala'); return; }
     setBusy(true); setErr('');
@@ -218,7 +213,7 @@ export default function AskUs() {
       const me = { id: playerId, name: name.trim(), roomId: rId };
       localSet('askus:me', JSON.stringify(me));
       setIdentity(me); setRoomId(rId); setScreen('room');
-    } catch (e) { setErr('Error al unirse. Intenta de nuevo.'); console.error(e); }
+    } catch (e) { setErr('Error al unirse. Revisa backend/Firebase en servidor.'); setBackendError('Backend/Firebase no disponible.'); console.error(e); }
     finally { setBusy(false); }
   }
 
@@ -354,11 +349,11 @@ export default function AskUs() {
             </>
           )}
 
-          {firebaseError && <p style={{ color: '#f87171', fontSize: 13, marginBottom: 10 }}>{firebaseError}</p>}
+          {backendError && <p style={{ color: '#f87171', fontSize: 13, marginBottom: 10 }}>{backendError}</p>}
           {err && <p style={{ color: '#f87171', fontSize: 13, marginBottom: 10 }}>{err}</p>}
-          <button style={{ ...S.primaryBtn, opacity: (busy || !db) ? 0.6 : 1 }} disabled={busy || !db}
+          <button style={{ ...S.primaryBtn, opacity: busy ? 0.6 : 1 }} disabled={busy}
             onClick={mode === 'create' ? createRoom : joinRoom}>
-            {busy ? '...' : !db ? 'Configura Firebase primero' : mode === 'create' ? '🚀 Crear sala' : '🎉 Unirme'}
+            {busy ? '...' : mode === 'create' ? '?? Crear sala' : '?? Unirme'}
           </button>
         </div>
       </div>

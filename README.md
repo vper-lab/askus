@@ -1,31 +1,31 @@
-# askUs 🎲
+﻿# askUs ðŸŽ²
 
-¿Quién es más probable que...? — versión para tu grupo de amigos.
+Â¿QuiÃ©n es mÃ¡s probable que...? â€” versiÃ³n para tu grupo de amigos.
 
-Una app web para jugar "¿Quién es más probable que...?" con amigos. Crea salas privadas, vota preguntas divertidas y chatea en tiempo real.
-
----
-
-## 🚀 Características
-
-- 🎯 **Preguntas diarias**: 200 preguntas organizadas por categorías
-- 👥 **Salas privadas**: Crea salas con códigos únicos para tu grupo
-- 🗳️ **Votaciones en tiempo real**: Vota quién es más probable que...
-- 💬 **Chat integrado**: Chatea mientras juegas
-- 📱 **Responsive**: Funciona en móvil y desktop
-- 🔥 **Firebase**: Persistencia en tiempo real (Realtime Database)
-- ⚡ **Rápido**: Vite + React para desarrollo moderno
+Una app web para jugar "Â¿QuiÃ©n es mÃ¡s probable que...?" con amigos. Crea salas privadas, vota preguntas divertidas y chatea en tiempo real.
 
 ---
 
-## 📋 Requisitos
+## ðŸš€ CaracterÃ­sticas
+
+- ðŸŽ¯ **Preguntas diarias**: 200 preguntas organizadas por categorÃ­as
+- ðŸ‘¥ **Salas privadas**: Crea salas con cÃ³digos Ãºnicos para tu grupo
+- ðŸ—³ï¸ **Votaciones en tiempo real**: Vota quiÃ©n es mÃ¡s probable que...
+- ðŸ’¬ **Chat integrado**: Chatea mientras juegas
+- ðŸ“± **Responsive**: Funciona en mÃ³vil y desktop
+- ðŸ”¥ **Firebase**: Persistencia en tiempo real (Realtime Database)
+- âš¡ **RÃ¡pido**: Vite + React para desarrollo moderno
+
+---
+
+## ðŸ“‹ Requisitos
 
 - Node.js 18+
 - Cuenta de Google (para Firebase)
 
 ---
 
-## 🛠️ Instalación y configuración
+## ðŸ› ï¸ InstalaciÃ³n y configuraciÃ³n
 
 ### 1. Clona o descarga el proyecto
 
@@ -45,16 +45,16 @@ npm install
 1. Ve a [console.firebase.google.com](https://console.firebase.google.com)
 2. Crea un nuevo proyecto (ej: `askus-grupo`)
 3. Habilita **Realtime Database**:
-   - Ve a **Build → Realtime Database**
+   - Ve a **Build â†’ Realtime Database**
    - Haz clic en **"Crear base de datos"**
    - Elige **"Comenzar en modo de prueba"**
-   - Selecciona región (ej: `europe-west1`)
+   - Selecciona regiÃ³n (ej: `europe-west1`)
 4. Registra una app web:
-   - Ve a **Configuración del proyecto** (⚙️)
-   - Pestaña **"Tus apps"**
+   - Ve a **ConfiguraciÃ³n del proyecto** (âš™ï¸)
+   - PestaÃ±a **"Tus apps"**
    - Haz clic en **`</>`** (web)
    - Pon nombre y registra
-5. Copia la configuración que aparece
+5. Copia la configuraciÃ³n que aparece
 
 ### 4. Configura variables de entorno
 
@@ -68,21 +68,21 @@ Edita `.env` con tus valores de Firebase:
 
 ```env
 # Firebase configuration
-VITE_FIREBASE_API_KEY=tu_apiKey
-VITE_FIREBASE_AUTH_DOMAIN=tu_authDomain
-VITE_FIREBASE_DATABASE_URL=https://tu-proyecto-default-rtdb.region.firebasedatabase.app
-VITE_FIREBASE_PROJECT_ID=tu_projectId
-VITE_FIREBASE_STORAGE_BUCKET=tu_storageBucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=tu_messagingSenderId
-VITE_FIREBASE_APP_ID=tu_appId
-VITE_FIREBASE_MEASUREMENT_ID=tu_measurementId
+FIREBASE_API_KEY=tu_apiKey
+FIREBASE_AUTH_DOMAIN=tu_authDomain
+FIREBASE_DATABASE_URL=https://tu-proyecto-default-rtdb.region.firebasedatabase.app
+FIREBASE_PROJECT_ID=tu_projectId
+FIREBASE_STORAGE_BUCKET=tu_storageBucket
+FIREBASE_MESSAGING_SENDER_ID=tu_messagingSenderId
+FIREBASE_APP_ID=tu_appId
+FIREBASE_MEASUREMENT_ID=tu_measurementId
 ```
 
-> **Nota**: El `VITE_FIREBASE_DATABASE_URL` es el más importante. Lo encuentras en Firebase Console → Realtime Database → URL en la parte superior.
+> **Nota**: El `FIREBASE_DATABASE_URL` es el mÃ¡s importante. Lo encuentras en Firebase Console â†’ Realtime Database â†’ URL en la parte superior.
 
 ### 5. Configura reglas de seguridad (desarrollo)
 
-Para desarrollo, pon reglas públicas en Firebase Console → Realtime Database → Rules:
+Para desarrollo, pon reglas pÃºblicas en Firebase Console â†’ Realtime Database â†’ Rules:
 
 ```json
 {
@@ -93,7 +93,7 @@ Para desarrollo, pon reglas públicas en Firebase Console → Realtime Database 
 }
 ```
 
-> ⚠️ **Importante**: Estas reglas hacen la base de datos pública. Solo para desarrollo. Para producción, configura reglas seguras con autenticación.
+> âš ï¸ **Importante**: Estas reglas hacen la base de datos pÃºblica. Solo para desarrollo. Para producciÃ³n, configura reglas seguras con autenticaciÃ³n.
 
 ### 6. Ejecuta en local
 
@@ -105,46 +105,46 @@ Abre `http://localhost:5173` en el navegador.
 
 ---
 
-## 🎮 Cómo jugar
+## ðŸŽ® CÃ³mo jugar
 
-1. **Crear sala**: Pon tu nombre y elige cuántas preguntas diarias (2-10)
-2. **Comparte código**: Da el código de sala a tus amigos
-3. **Juega**: Vota quién es más probable que... en cada pregunta
-4. **Chatea**: Habla mientras votáis
+1. **Crear sala**: Pon tu nombre y elige cuÃ¡ntas preguntas diarias (2-10)
+2. **Comparte cÃ³digo**: Da el cÃ³digo de sala a tus amigos
+3. **Juega**: Vota quiÃ©n es mÃ¡s probable que... en cada pregunta
+4. **Chatea**: Habla mientras votÃ¡is
 
 ---
 
-## 📁 Estructura del proyecto
+## ðŸ“ Estructura del proyecto
 
 ```
 askus/
-├── index.html              # HTML principal
-├── package.json            # Dependencias y scripts
-├── vite.config.js          # Configuración Vite
-├── questions.json          # 200 preguntas del juego
-├── server.js               # Backend Express (generación preguntas)
-├── .env                    # Variables de entorno (no subir a git)
-├── .env.example            # Ejemplo de variables
-└── src/
-    ├── main.jsx            # Punto de entrada React
-    ├── App.jsx             # Componente principal
-    ├── firebase.js         # Configuración Firebase
-    └── index.css           # Estilos globales
+â”œâ”€â”€ index.html              # HTML principal
+â”œâ”€â”€ package.json            # Dependencias y scripts
+â”œâ”€â”€ vite.config.js          # ConfiguraciÃ³n Vite
+â”œâ”€â”€ questions.json          # 200 preguntas del juego
+â”œâ”€â”€ server.js               # Backend Express (generaciÃ³n preguntas)
+â”œâ”€â”€ .env                    # Variables de entorno (no subir a git)
+â”œâ”€â”€ .env.example            # Ejemplo de variables
+â””â”€â”€ src/
+    â”œâ”€â”€ main.jsx            # Punto de entrada React
+    â”œâ”€â”€ App.jsx             # Componente principal
+    â”œâ”€â”€ firebase.js         # ConfiguraciÃ³n Firebase
+    â””â”€â”€ index.css           # Estilos globales
 ```
 
 ---
 
-## 🔧 Desarrollo
+## ðŸ”§ Desarrollo
 
-### Añadir más preguntas
+### AÃ±adir mÃ¡s preguntas
 
-Edita `questions.json` para añadir preguntas nuevas. El formato es:
+Edita `questions.json` para aÃ±adir preguntas nuevas. El formato es:
 
 ```json
 {
   "questions": [
-    "Quien es mas probable que [acción]?",
-    "Quien es mas probable que [otra acción]?"
+    "Quien es mas probable que [acciÃ³n]?",
+    "Quien es mas probable que [otra acciÃ³n]?"
   ]
 }
 ```
@@ -153,7 +153,7 @@ Edita `questions.json` para añadir preguntas nuevas. El formato es:
 
 Edita la constante `PALETTE` en `src/App.jsx`.
 
-### Despliegue en producción
+### Despliegue en producciÃ³n
 
 **Vercel (recomendado):**
 ```bash
@@ -169,16 +169,16 @@ npm run build
 
 ---
 
-## 🐛 Solución de problemas
+## ðŸ› SoluciÃ³n de problemas
 
-### "Firebase no está configurado"
+### "Firebase no estÃ¡ configurado"
 - Verifica que `.env` tenga todos los valores correctos
 - Reinicia `npm run dev`
-- Comprueba que `VITE_FIREBASE_DATABASE_URL` sea válido
+- Comprueba que `FIREBASE_DATABASE_URL` sea vÃ¡lido
 
 ### "Error al crear sala"
 - Verifica reglas de Firebase (deben permitir escritura)
-- Comprueba conexión a internet
+- Comprueba conexiÃ³n a internet
 
 ### Preguntas no se generan
 - Verifica que `questions.json` exista y tenga preguntas
@@ -186,20 +186,21 @@ npm run build
 
 ---
 
-## 📄 Licencia
+## ðŸ“„ Licencia
 
-Este proyecto es de código abierto. Úsalo como quieras.
+Este proyecto es de cÃ³digo abierto. Ãšsalo como quieras.
 
 ---
 
-## 🤝 Contribuir
+## ðŸ¤ Contribuir
 
 1. Fork el repo
 2. Crea una rama (`git checkout -b feature/nueva-funcion`)
-3. Commit cambios (`git commit -am 'Añade nueva función'`)
+3. Commit cambios (`git commit -am 'AÃ±ade nueva funciÃ³n'`)
 4. Push (`git push origin feature/nueva-funcion`)
 5. Abre un Pull Request
 
 ---
 
-¡Diviértete jugando con tus amigos! 🎉
+Â¡DiviÃ©rtete jugando con tus amigos! ðŸŽ‰
+
