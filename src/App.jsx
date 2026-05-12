@@ -15,19 +15,40 @@ const today  = () => new Date().toISOString().slice(0, 10);
 const init   = (name = '') => name[0]?.toUpperCase() || '?';
 const pal    = (idx) => PALETTE[(idx ?? 0) % PALETTE.length];
 
-// ─── Firebase storage helpers (mirrors window.storage API) ──────────────────
-// Key sanitisation: Firebase paths can't have . # $ [ ]
-const fKey = (k) => k.replace(/[.#$[\]]/g, '-');
-
 async function storageGet(key) {
-  const snap = await get(ref(db, fKey(key)));
-  return snap.exists() ? { value: snap.val() } : null;
+  const resp = await fetch('/api/storage/get', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key }),
+  });
+  if (!resp.ok) {
+    const body = await resp.text().catch(() => '');
+    throw new Error(`storage/get ${resp.status} ${body}`.trim());
+  }
+  const data = await resp.json();
+  return data?.found ? { value: data.value } : null;
 }
 async function storageSet(key, value) {
-  await set(ref(db, fKey(key)), value);
+  const resp = await fetch('/api/storage/set', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, value }),
+  });
+  if (!resp.ok) {
+    const body = await resp.text().catch(() => '');
+    throw new Error(`storage/set ${resp.status} ${body}`.trim());
+  }
 }
 async function storageDelete(key) {
-  await remove(ref(db, fKey(key)));
+  const resp = await fetch('/api/storage/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key }),
+  });
+  if (!resp.ok) {
+    const body = await resp.text().catch(() => '');
+    throw new Error(`storage/delete ${resp.status} ${body}`.trim());
+  }
 }
 
 // Local (per-device) session stored in localStorage
